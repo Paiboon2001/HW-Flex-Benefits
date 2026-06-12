@@ -1,0 +1,110 @@
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 32px;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.topbar__brand {
+  display: flex;
+  align-items: center;
+  flex: 1 0 0;
+  min-width: 0;
+}
+
+.topbar__brand img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+/* ---- Desktop user chip ---- */
+.topbar__user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  background: var(--bg-secondary);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.topbar__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 1000px;
+  background: var(--bg-primary);
+  color: var(--text-gray-icon);
+  flex-shrink: 0;
+}
+
+.topbar__user-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  letter-spacing: 0.4px;
+}
+
+.topbar__user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.topbar__user-role {
+  font-size: 10px;
+  color: var(--text-gray-02);
+  line-height: 1.5;
+}
+
+.topbar__user-caret {
+  color: var(--text-gray-icon);
+  flex-shrink: 0;
+}
+
+/* ---- Hamburger (hidden on desktop) ---- */
+.topbar__menu {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.topbar__menu:hover {
+  background: var(--bg-secondary);
+}
+
+/* ---- Responsive: below 1024px swap chip → hamburger ---- */
+@media (max-width: 1023px) {
+  .topbar {
+    padding: 12px 20px;
+  }
+
+  .topbar__user {
+    display: none;
+  }
+
+  .topbar__menu {
+    display: flex;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar {
+    padding: 12px 16px;
+  }
+}

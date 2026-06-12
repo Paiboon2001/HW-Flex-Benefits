@@ -1,0 +1,148 @@
+.flex-benefits {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-secondary);
+}
+
+.flex-benefits__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.flex-benefits__main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 0;
+  min-width: 0;
+}
+
+/* ---- Page header ("Flex Benefits" + hint) ---- */
+.flex-benefits__head {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 24px 32px;
+  background: var(--bg-primary);
+  border-bottom: 1px solid #e9eaf5;
+}
+
+.flex-benefits__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.flex-benefits__hint {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.flex-benefits__hint-icon {
+  color: var(--text-gray-icon);
+  flex-shrink: 0;
+}
+
+.flex-benefits__hint-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-gray-icon);
+}
+
+/* ---- Scrollable content ---- */
+.flex-benefits__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 24px;
+}
+
+.flex-benefits__section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0;
+}
+
+.flex-benefits__section-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.flex-benefits__actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Short button label only shown on very small screens */
+.flex-benefits__btn-text-short {
+  display: none;
+}
+
+.flex-benefits__empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+/* ---- Tablet / mobile ---- */
+@media (max-width: 1023px) {
+  .flex-benefits__head {
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .flex-benefits__head {
+    padding: 16px;
+  }
+
+  .flex-benefits__content {
+    padding: 16px;
+    gap: 20px;
+  }
+
+  .flex-benefits__hint-text {
+    font-size: 12px;
+  }
+
+  .flex-benefits__section-title {
+    font-size: 18px;
+  }
+
+  .flex-benefits__actions {
+    gap: 8px;
+  }
+
+  /* Swap "ประวัติการเบิกงบ" → icon-only, "สร้าง Benefit" → "สร้าง" */
+  .flex-benefits__actions .btn--outline .flex-benefits__btn-text {
+    display: none;
+  }
+
+  .flex-benefits__actions .btn--outline {
+    padding: 0 10px;
+  }
+
+  .flex-benefits__btn-text {
+    display: none;
+  }
+
+  .flex-benefits__btn-text-short {
+    display: inline;
+  }
+}

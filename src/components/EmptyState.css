@@ -1,0 +1,40 @@
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  width: 189px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.empty-state__art {
+  position: relative;
+  width: 189px;
+  height: 106px;
+}
+
+.empty-state__box {
+  position: absolute;
+  left: 0;
+  top: 35px;
+  width: 189px;
+  height: 66px;
+}
+
+.empty-state__lid {
+  position: absolute;
+  left: 48px;
+  top: 0;
+  width: 91px;
+  height: 106px;
+}
+
+.empty-state__message {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.63;
+  color: var(--text-secondary);
+}

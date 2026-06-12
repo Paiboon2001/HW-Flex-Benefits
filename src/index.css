@@ -1,0 +1,61 @@
+/* Design tokens — from Figma "Automated" variables */
+:root {
+  /* Brand */
+  --brand-primary: #118df5;
+  --brand-white: #ffffff;
+  --brand-black: #000000;
+
+  /* Backgrounds */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f6ff;
+
+  /* Text */
+  --text-secondary: #000000;
+  --text-primary: #118df5;
+  --text-white: #ffffff;
+  --text-gray-icon: #777b92;
+  --text-gray-02: #8094ad;
+
+  /* Border */
+  --border-default: #e1e6ec;
+
+  /* Buttons */
+  --btn-green: #04cd83;
+  --btn-green-hover: #03b876;
+
+  /* Misc */
+  --radius-card: 24px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+}
+
+:root {
+  /* Self-hosted, cross-platform stack with SF-Pro-like look.
+     Inter renders Latin; Thai glyphs fall through to IBM Plex Sans Thai. */
+  --font-sans: "Inter Variable", "Inter", "IBM Plex Sans Thai", -apple-system,
+    BlinkMacSystemFont, system-ui, "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+}

@@ -1,0 +1,47 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  line-height: 1.5;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    transform 0.05s ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn svg {
+  flex-shrink: 0;
+}
+
+/* Primary — green CTA */
+.btn--primary {
+  background: var(--btn-green);
+  color: var(--text-white);
+}
+
+.btn--primary:hover {
+  background: var(--btn-green-hover);
+}
+
+/* Outline — white bordered */
+.btn--outline {
+  background: var(--brand-white);
+  color: var(--text-secondary);
+  border-color: var(--border-default);
+}
+
+.btn--outline:hover {
+  background: var(--bg-secondary);
+}
