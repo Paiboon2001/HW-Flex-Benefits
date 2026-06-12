@@ -25,23 +25,44 @@
   flex-shrink: 0;
 }
 
-/* Primary — green CTA */
+/* Primary — green CTA (Figma "Button Build" 228:2825) */
+/* Default */
 .btn--primary {
   background: var(--btn-green);
   color: var(--text-white);
 }
 
+/* Hover — dark green + green glow (228:2829) */
 .btn--primary:hover {
-  background: var(--btn-green-hover);
+  background: #26814c;
+  box-shadow: 0 4px 10px rgba(4, 205, 131, 0.15);
 }
 
-/* Outline — white bordered */
+/* Click / pressed — muted green + green glow (228:2831) */
+.btn--primary:active {
+  background: #5db983;
+  box-shadow: 0 4px 10px rgba(4, 205, 131, 0.15);
+}
+
+/* Outline — white bordered (Figma "Button History" 228:2832) */
+/* Default */
 .btn--outline {
   background: var(--brand-white);
   color: var(--text-secondary);
   border-color: var(--border-default);
 }
 
+/* Hover — light grey fill, black border (228:2836) */
 .btn--outline:hover {
-  background: var(--bg-secondary);
+  background: #ecedef;
+  border-color: var(--brand-black);
 }
+
+/* Click / pressed — darker grey fill, black border (228:2838) */
+.btn--outline:active {
+  background: #afb1b6;
+  border-color: var(--brand-black);
+}
+
+
+

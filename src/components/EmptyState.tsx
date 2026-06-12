@@ -1,5 +1,4 @@
 import Button from "./Button";
-import Icon from "./Icon";
 import "./EmptyState.css";
 
 interface EmptyStateProps {
@@ -24,7 +23,21 @@ export default function EmptyState({
       </div>
       <p className="empty-state__message">{message}</p>
       <Button variant="primary" onClick={onCreate}>
-        <Icon name="plus" size={20} />
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 20 20"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M9.99984 4.16663V15.8333M4.1665 9.99996H15.8332"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
         {ctaLabel}
       </Button>
     </div>

@@ -4,7 +4,6 @@
   align-items: center;
   justify-content: center;
   gap: 32px;
-  width: 189px;
   margin: 0 auto;
   text-align: center;
 }
@@ -33,8 +32,9 @@
 
 .empty-state__message {
   margin: 0;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   line-height: 1.63;
   color: var(--text-secondary);
+  white-space: nowrap;
 }

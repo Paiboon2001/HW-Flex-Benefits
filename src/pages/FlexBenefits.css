@@ -23,7 +23,7 @@
   display: flex;
   align-items: center;
   gap: 32px;
-  padding: 24px 32px;
+  padding: 16px 32px;
   background: var(--bg-primary);
   border-bottom: 1px solid #e9eaf5;
 }
@@ -39,8 +39,16 @@
 .flex-benefits__hint {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   min-width: 0;
+}
+
+.flex-benefits__hint-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  outline: none;
 }
 
 .flex-benefits__hint-icon {
@@ -52,6 +60,46 @@
   font-size: 14px;
   font-weight: 500;
   color: var(--text-gray-icon);
+}
+
+/* Tooltip — hidden by default, revealed on hover / focus of the ⓘ trigger */
+.flex-benefits__tooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 20;
+  width: max-content;
+  max-width: min(280px, 80vw);
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  border: 1px solid var(--border-default);
+  box-shadow: 0 8px 24px rgba(8, 12, 30, 0.16);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+}
+
+.flex-benefits__tooltip::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 10px;
+  border: 6px solid transparent;
+  border-bottom-color: #ffffff;
+}
+
+.flex-benefits__hint-trigger:hover .flex-benefits__tooltip,
+.flex-benefits__hint-trigger:focus-visible .flex-benefits__tooltip,
+.flex-benefits__hint-trigger:focus .flex-benefits__tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 /* ---- Scrollable content ---- */
@@ -98,12 +146,20 @@
   padding: 48px 0;
 }
 
+/* Grid of created benefit cards */
+.flex-benefits__grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 24px;
+}
+
 /* ---- Tablet / mobile ---- */
 @media (max-width: 1023px) {
   .flex-benefits__head {
     flex-wrap: wrap;
     gap: 8px 16px;
-    padding: 20px;
+    padding: 16px 20px;
   }
 }
 
@@ -117,8 +173,9 @@
     gap: 20px;
   }
 
+  /* Mobile: hide the inline hint text — show it via the ⓘ tooltip instead */
   .flex-benefits__hint-text {
-    font-size: 12px;
+    display: none;
   }
 
   .flex-benefits__section-title {

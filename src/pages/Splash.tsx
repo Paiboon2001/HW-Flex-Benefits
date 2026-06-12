@@ -24,7 +24,7 @@ export default function Splash({ onFinish, duration = 2500 }: SplashProps) {
     <div className="splash" data-node-id="228:6257">
       <video
         className="splash__video"
-        src="/assets/HHSLPASH.mp4"
+        src="/assets/Good.mp4"
         autoPlay
         muted
         playsInline

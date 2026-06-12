@@ -6,37 +6,43 @@
   padding: 24px;
   border-radius: var(--radius-card);
   overflow: hidden;
-  background: linear-gradient(173.99deg, #0087ff 21%, #0169ff 76%, #03075e 125%);
+  background: linear-gradient(
+    173.99deg,
+    #0169ff 21.55%,
+    #0087ff 75.65%,
+    #03075e 125.21%
+  );
   box-shadow: 0 4px 20px 1px rgba(98, 102, 125, 0.05),
     inset 0 4px 4px 0 rgba(3, 21, 129, 0.13);
   color: var(--text-white);
 }
 
-/* Decorative flowing swirls baked from the Figma mask groups */
+/* Decorative flowing blobs baked from the Figma mask groups (240:3488 / 240:3498).
+   Each blob is much taller than the card; only the middle band shows, creating
+   the flowing channel effect. */
 .benefit-card__swirl {
   position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 92%;
+  height: 470px;
+  display: block;
   pointer-events: none;
-  opacity: 0.9;
 }
 
 .benefit-card__swirl--1 {
-  width: 70%;
-  bottom: -10%;
-  left: -5%;
-  transform: rotate(17deg);
+  transform: translate(calc(-50% - 36px), calc(-50% + 38px)) rotate(17.72deg);
 }
 
 .benefit-card__swirl--2 {
-  width: 70%;
-  top: -25%;
-  right: -5%;
-  transform: rotate(162deg);
+  transform: translate(calc(-50% + 130px), calc(-50% - 48px)) rotate(162.28deg)
+    scaleY(-1);
 }
 
 /* ---- Emoji cluster ---- */
 .benefit-card__emojis {
   position: absolute;
-  right: 24px;
+  right: 0;
   bottom: 0;
   width: 320px;
   height: 130px;
@@ -45,31 +51,52 @@
 
 .benefit-card__emojis .emoji {
   position: absolute;
-  bottom: 0;
 }
 
 .emoji--laugh {
   width: 64px;
-  left: 0;
-  bottom: 4px;
+  left: 15px;
+  bottom: 1px;
+  transform-origin: bottom center;
+  animation: emoji-laugh 0.6s ease-in-out infinite;
 }
 
 .emoji--sad {
-  width: 78px;
-  left: 60px;
-  bottom: 4px;
+  width: 130px;
+  left: 52px;
+  bottom: -6px;
 }
 
 .emoji--green {
   width: 92px;
-  left: 132px;
+  left: 145px;
   bottom: -4px;
 }
 
+/* Laughing bob — used staggered on the two laughing emojis */
+@keyframes emoji-laugh {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+  30% {
+    transform: translateY(-3px) rotate(-5deg) scale(1.05);
+  }
+  70% {
+    transform: translateY(-1px) rotate(4deg) scale(1.03);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .emoji--laugh {
+    animation: none;
+  }
+}
+
 .emoji--happy {
-  width: 60px;
-  right: 30px;
-  bottom: 64px;
+  width: 80px;
+  left: 186px;
+  bottom: 60px;
 }
 
 .emoji--blue {
@@ -84,8 +111,19 @@
   z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 16px;
   flex: 1;
+  /* Fixed 32px between the upper and bottom groups */
+  gap: 32px;
+  /* Tight single line-height; Thai marks still render (text sits inside the
+     card's 24px padding, so nothing is clipped) */
+  line-height: 1;
+}
+
+/* Upper group: label row + used amount */
+.benefit-card__upper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .benefit-card__top {
@@ -124,6 +162,7 @@
   background: var(--brand-white);
   border-radius: var(--radius-sm);
   font-size: 14px;
+  line-height: 1;
 }
 
 .benefit-card__cycle-key {
@@ -167,8 +206,7 @@
 .benefit-card__bottom {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin-top: auto;
+  gap: 12px;
 }
 
 .benefit-card__remaining {
@@ -205,8 +243,16 @@
 }
 
 @media (max-width: 480px) {
+  /* Card hugs its content (no fixed height) */
   .benefit-card {
-    min-height: 200px;
+    min-height: auto;
+    padding: 16px;
+  }
+
+  /* Fixed 32px between groups */
+  .benefit-card__body {
+    justify-content: flex-start;
+    gap: 32px;
   }
 
   .benefit-card__label {
@@ -220,6 +266,20 @@
     opacity: 0.95;
     transform: scale(0.8);
     transform-origin: bottom right;
+  }
+
+  /* Mobile: nudge every emoji except the blue one to the left
+     (margin-left, not transform, so the laugh animation still works) */
+  .emoji--laugh,
+  .emoji--sad,
+  .emoji--green,
+  .emoji--happy {
+    margin-left: -72px;
+  }
+
+  /* Mobile: hide only the yellow laugh emoji (it overlaps the THB text) */
+  .emoji--laugh {
+    display: none;
   }
 
   /* Let the numbers sit above the emojis on small screens */

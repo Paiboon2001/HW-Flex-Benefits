@@ -1,0 +1,161 @@
+.bcard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1 1 360px;
+  min-width: 360px;
+  max-width: 554px;
+  padding: 24px;
+  background: var(--bg-primary);
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(98, 102, 125, 0.1);
+}
+
+/* ---- Top: thumbnail + details ---- */
+.bcard__top {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.bcard__thumb {
+  flex-shrink: 0;
+  width: 80px;
+  height: 67px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--bg-secondary);
+}
+
+.bcard__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bcard__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.bcard__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.bcard__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bcard__checkbox {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--text-gray-icon);
+  border-radius: 4px;
+  background: var(--brand-white);
+}
+
+.bcard__progress {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bcard__amount {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  line-height: 1;
+}
+
+.bcard__used {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.bcard__sep {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.bcard__total {
+  font-size: 12px;
+  color: var(--text-gray-icon);
+}
+
+.bcard__bar {
+  width: 100%;
+  height: 6px;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  overflow: hidden;
+}
+
+.bcard__bar-fill {
+  height: 100%;
+  border-radius: 8px;
+  background: var(--btn-green);
+}
+
+/* ---- Footer: withdraw + menu ---- */
+.bcard__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bcard__withdraw {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.bcard__withdraw-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-gray-icon);
+}
+
+.bcard__withdraw-amount {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.bcard__withdraw-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.bcard__withdraw-unit {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-gray-icon);
+}
+
+.bcard__menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-gray-icon);
+  cursor: pointer;
+}
