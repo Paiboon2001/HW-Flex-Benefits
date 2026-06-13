@@ -7,6 +7,26 @@ export interface NewBenefit {
   image: string | null;
 }
 
+/**
+ * Format a money text field: keep digits + a single decimal point (max 2
+ * decimals for satang) and add thousands separators to the integer part.
+ * e.g. "1000.5" → "1,000.5", "12.345" → "12.34".
+ */
+export function formatMoneyInput(raw: string): string {
+  // Keep digits and dots only.
+  let v = raw.replace(/[^\d.]/g, "");
+  // Collapse to a single decimal point (keep the first one).
+  const firstDot = v.indexOf(".");
+  if (firstDot !== -1) {
+    v = v.slice(0, firstDot + 1) + v.slice(firstDot + 1).replace(/\./g, "");
+  }
+  if (v === "") return "";
+  const [intRaw, decRaw] = v.split(".");
+  const intNum = intRaw ? Number(intRaw).toLocaleString("en-US") : "0";
+  if (decRaw === undefined) return intNum; // no decimal point typed
+  return `${intNum}.${decRaw.slice(0, 2)}`; // up to 2 decimals
+}
+
 interface CreateBenefitModalProps {
   open: boolean;
   onClose: () => void;
@@ -67,15 +87,16 @@ export default function CreateBenefitModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  // Money input: keep digits only, add thousands separators (e.g. 1,000).
+  // Money input: allow up to 2 decimals (satang); add thousands separators
+  // to the integer part (e.g. 1,000.50).
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const digits = e.target.value.replace(/\D/g, "");
-    setAmount(digits ? Number(digits).toLocaleString("en-US") : "");
+    setAmount(formatMoneyInput(e.target.value));
   };
 
   const handleSave = () => {
     const total = parseFloat(amount.replace(/,/g, "")) || 0;
-    const image = preview;
+    // No uploaded image → fall back to the default placeholder.
+    const image = preview ?? "/assets/picture.png";
     setPreview(null);
     onSave?.({ name: name.trim(), total, image });
   };
@@ -95,8 +116,8 @@ export default function CreateBenefitModal({
   // Enable "บันทึก" only when every field is filled and within budget.
   const total = parseFloat(amount.replace(/,/g, "")) || 0;
   const exceedsMax = total > maxAmount;
-  const isValid =
-    name.trim() !== "" && total > 0 && !exceedsMax && preview !== null;
+  // Image is optional — only name, a positive amount within budget are required.
+  const isValid = name.trim() !== "" && total > 0 && !exceedsMax;
   // When editing, only enable "บันทึก" if something actually changed
   // (name, budget, or image differs from the original).
   const isDirty =
@@ -237,7 +258,7 @@ export default function CreateBenefitModal({
           <p className="upload__hint">
             อนุญาตเฉพาะ *.jpeg, *.jpg, *.png
             <br />
-            (อัตราส่วนภาพ 4:3 แนะนำ 600x400 px.)
+            (อัตราส่วนภาพ 4:3)
           </p>
         </div>
 
@@ -266,7 +287,7 @@ export default function CreateBenefitModal({
                 id="cbm-amount"
                 className="tf__input"
                 type="text"
-                inputMode="numeric"
+                inputMode="decimal"
                 autoComplete="off"
                 placeholder=" "
                 value={amount}

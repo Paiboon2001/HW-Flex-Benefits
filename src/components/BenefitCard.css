@@ -39,7 +39,11 @@
     scaleY(-1);
 }
 
-/* ---- Emoji cluster ---- */
+/* ---- Emoji cluster ----
+   The whole group is anchored to the bottom-right of the card, and every
+   emoji is positioned by its distance from the RIGHT edge. Combined with
+   `transform-origin: bottom right` on every breakpoint, the group always
+   hugs the right edge no matter how far it's scaled down. */
 .benefit-card__emojis {
   position: absolute;
   right: 0;
@@ -47,6 +51,7 @@
   width: 320px;
   height: 130px;
   pointer-events: none;
+  transform-origin: bottom right;
 }
 
 .benefit-card__emojis .emoji {
@@ -55,7 +60,7 @@
 
 .emoji--laugh {
   width: 64px;
-  left: 15px;
+  right: 241px;
   bottom: 1px;
   transform-origin: bottom center;
   animation: emoji-laugh 0.6s ease-in-out infinite;
@@ -63,13 +68,13 @@
 
 .emoji--sad {
   width: 130px;
-  left: 52px;
+  right: 138px;
   bottom: -6px;
 }
 
 .emoji--green {
   width: 92px;
-  left: 145px;
+  right: 83px;
   bottom: -4px;
 }
 
@@ -95,7 +100,7 @@
 
 .emoji--happy {
   width: 80px;
-  left: 186px;
+  right: 54px;
   bottom: 60px;
 }
 
@@ -232,13 +237,12 @@
   font-weight: 600;
 }
 
-/* ---- Responsive ---- */
+/* ---- Responsive ----
+   Only scale the group; it stays flush to the right edge because the
+   container is pinned at right:0 and scales from its bottom-right corner. */
 @media (max-width: 768px) {
   .benefit-card__emojis {
-    right: 12px;
-    width: 280px;
     transform: scale(0.92);
-    transform-origin: bottom right;
   }
 }
 
@@ -249,14 +253,19 @@
     padding: 16px;
   }
 
-  /* Fixed 32px between groups */
+  /* Mobile: spread the two groups to fill the card height (flex) */
   .benefit-card__body {
-    justify-content: flex-start;
-    gap: 32px;
+    justify-content: space-between;
+    gap: 0;
   }
 
   .benefit-card__label {
     font-size: 14px;
+  }
+
+  /* Mobile: larger gap between the label and the used amount */
+  .benefit-card__upper {
+    gap: 16px;
   }
 
   .benefit-card__cycle {
@@ -265,22 +274,31 @@
     border-radius: 4px;
   }
 
-  .benefit-card__emojis {
-    right: 0;
-    bottom: 0;
-    width: 240px;
-    opacity: 0.95;
-    transform: scale(0.8);
-    transform-origin: bottom right;
+  /* Smaller used-amount on mobile */
+  .benefit-card__used-whole {
+    font-size: 24px;
   }
 
-  /* Mobile: nudge every emoji except the blue one to the left
-     (margin-left, not transform, so the laugh animation still works) */
-  .emoji--laugh,
-  .emoji--sad,
-  .emoji--green,
-  .emoji--happy {
-    margin-left: -72px;
+  .benefit-card__used-decimal,
+  .benefit-card__used-unit {
+    font-size: 16px;
+  }
+
+  /* Smaller remaining line on mobile */
+  .benefit-card__remaining-now,
+  .benefit-card__remaining-total,
+  .benefit-card__remaining-sep {
+    font-size: 16px;
+  }
+
+  .benefit-card__remaining-unit {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .benefit-card__emojis {
+    opacity: 0.95;
+    transform: scale(0.8);
   }
 
   /* Mobile: hide only the yellow laugh emoji (it overlaps the THB text) */

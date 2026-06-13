@@ -53,8 +53,9 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+  /* Fixed box (4:3) — never resizes to the chosen image */
   width: 170px;
-  height: 120px;
+  height: 127.5px;
   padding: 24px;
   border: 1.5px dashed var(--text-gray-02);
   border-radius: 12px;
@@ -271,6 +272,21 @@
   cursor: not-allowed;
 }
 
+/* Danger — destructive confirm (Figma "Delete" 311:3741) */
+.modal-btn--danger {
+  background: #ff464b;
+  color: var(--text-white);
+}
+
+.modal-btn--danger:hover:not(:disabled) {
+  background: #e23a3f;
+  box-shadow: 0 4px 5px rgba(255, 70, 75, 0.18);
+}
+
+.modal-btn--danger:active:not(:disabled) {
+  background: #ff6b6f;
+}
+
 .modal-btn--outline {
   background: var(--brand-white);
   color: var(--text-primary);
@@ -295,6 +311,18 @@
   from {
     opacity: 0;
     transform: translateY(8px) scale(0.98);
+  }
+}
+
+/* ---- Mobile: stack the upload area + hint and center them ---- */
+@media (max-width: 480px) {
+  .upload {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .upload__hint {
+    text-align: center;
   }
 }
 

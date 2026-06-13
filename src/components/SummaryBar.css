@@ -83,14 +83,40 @@
   background: #2150a5;
 }
 
+/* ---- Mobile (Figma 228:2431) ---- */
 @media (max-width: 600px) {
   .summary-bar {
-    padding: 12px 16px;
-    gap: 12px;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    padding: 16px;
   }
 
+  /* Info takes the whole row, count left / total right */
+  .summary-bar__info {
+    flex-basis: 100%;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  /* No colon on mobile (count and total are spread apart) */
+  .summary-bar__colon {
+    display: none;
+  }
+
+  .summary-bar__label,
+  .summary-bar__unit {
+    font-size: 14px;
+  }
+
+  .summary-bar__count,
+  .summary-bar__total {
+    font-size: 16px;
+  }
+
+  /* Full-width button on the next row */
   .summary-bar__submit {
     width: auto;
-    flex: 1;
+    flex: 1 0 0;
+    min-width: 0;
   }
 }

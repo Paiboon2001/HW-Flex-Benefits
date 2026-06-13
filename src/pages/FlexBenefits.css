@@ -229,3 +229,10 @@
     display: inline;
   }
 }
+
+@media (max-width: 480px) {
+  /* Mobile: tighter spacing between stacked cards */
+  .flex-benefits__grid {
+    gap: 16px;
+  }
+}

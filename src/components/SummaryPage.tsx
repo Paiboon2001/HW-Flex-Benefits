@@ -1,4 +1,7 @@
+import { useRef, useState } from "react";
 import type { Benefit } from "./BenefitItemCard";
+import { formatMoneyInput } from "./CreateBenefitModal";
+import ConfirmModal from "./ConfirmModal";
 import "./SummaryPage.css";
 
 interface SummaryPageProps {
@@ -8,6 +11,10 @@ interface SummaryPageProps {
   remaining: number;
   onBack: () => void;
   onSubmit: () => void;
+  /** Edit a benefit's withdrawal amount inline from the summary. */
+  onAmountChange?: (id: string, amount: number) => void;
+  /** Show an error toast (e.g. amount over the card's remaining budget). */
+  onError?: (message: string) => void;
 }
 
 const fmt = (n: number) =>
@@ -15,6 +22,62 @@ const fmt = (n: number) =>
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
+
+/**
+ * Editable withdrawal-amount field (the "฿ 56.00" badge). Keeps its own text
+ * while typing and commits the parsed value up to the parent. Entering more
+ * than the card's remaining budget turns the field red and fires `onError`.
+ */
+function AmountField({
+  value,
+  max,
+  onChange,
+  onError,
+}: {
+  value: number;
+  max: number;
+  onChange: (amount: number) => void;
+  onError: (max: number) => void;
+}) {
+  const [text, setText] = useState(() => fmt(value));
+  const wasError = useRef(false);
+
+  const current = parseFloat(text.replace(/,/g, "")) || 0;
+  const error = current > max;
+
+  const handle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let next = formatMoneyInput(e.target.value);
+    // Deleting everything falls back to 0.00 (keeps the row, disables submit).
+    if (next === "") next = "0.00";
+    const n = parseFloat(next.replace(/,/g, "")) || 0;
+    setText(next);
+    onChange(n);
+    // Fire the error toast on the rising edge (just exceeded the limit).
+    if (n > max && !wasError.current) onError(max);
+    wasError.current = n > max;
+  };
+
+  return (
+    <label
+      className={`summary-row__badge${
+        error ? " summary-row__badge--error" : ""
+      }`}
+    >
+      <span className="summary-row__baht">฿</span>
+      <input
+        className="summary-row__input"
+        type="text"
+        inputMode="decimal"
+        autoComplete="off"
+        aria-label="จำนวนเงินที่เบิก"
+        size={Math.max(text.length, 1)}
+        value={text}
+        onChange={handle}
+        onBlur={() => setText(fmt(parseFloat(text.replace(/,/g, "")) || 0))}
+      />
+    </label>
+  );
+}
 
 const TH_MONTHS = [
   "ม.ค.",
@@ -45,9 +108,22 @@ export default function SummaryPage({
   remaining,
   onBack,
   onSubmit,
+  onAmountChange,
+  onError,
 }: SummaryPageProps) {
   const totalWithdraw = benefits.reduce((sum, b) => sum + (b.used ?? 0), 0);
   const afterRemaining = remaining - totalWithdraw;
+  // Every requested benefit must have an amount that is > 0 and within its
+  // remaining budget (total − disbursed) before sending.
+  const canSubmit =
+    benefits.length > 0 &&
+    benefits.every((b) => {
+      const u = b.used ?? 0;
+      return u > 0 && u <= b.total - (b.disbursed ?? 0);
+    });
+
+  // Going back asks for confirmation first (Figma "Confirm Back" 311:3812).
+  const [confirmBackOpen, setConfirmBackOpen] = useState(false);
 
   const today = new Date();
   const expected = new Date(today);
@@ -61,7 +137,7 @@ export default function SummaryPage({
             className="summary__back"
             type="button"
             aria-label="ย้อนกลับ"
-            onClick={onBack}
+            onClick={() => setConfirmBackOpen(true)}
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path
@@ -76,7 +152,11 @@ export default function SummaryPage({
           <h1 className="summary__title">สรุปคำขอการเบิกงบ Benefits</h1>
         </div>
         <nav className="summary__breadcrumb">
-          <button type="button" className="summary__crumb" onClick={onBack}>
+          <button
+            type="button"
+            className="summary__crumb"
+            onClick={() => setConfirmBackOpen(true)}
+          >
             Flex Benefits
           </button>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -117,12 +197,18 @@ export default function SummaryPage({
                         </span>
                       </p>
                     </div>
-                    <div className="summary-row__badge">
-                      <span className="summary-row__baht">฿</span>
-                      <span className="summary-row__amount">
-                        {fmt(b.used ?? 0)}
-                      </span>
-                    </div>
+                    <AmountField
+                      value={b.used ?? 0}
+                      max={b.total - (b.disbursed ?? 0)}
+                      onChange={(amount) => onAmountChange?.(b.id, amount)}
+                      onError={(max) =>
+                        onError?.(
+                          `ไม่สามารถใส่จำนวนเงินที่มากกว่า ${max.toLocaleString(
+                            "en-US"
+                          )} บาทได้`
+                        )
+                      }
+                    />
                   </div>
                 ))}
               </div>
@@ -256,12 +342,27 @@ export default function SummaryPage({
               type="button"
               className="summary-card__submit"
               onClick={onSubmit}
+              disabled={!canSubmit}
             >
               ส่งคำขอ
             </button>
           </div>
         </div>
       </div>
+
+      <ConfirmModal
+        open={confirmBackOpen}
+        title="คุณแน่ใจหรือไม่ ว่าจะออกจากหน้านี้"
+        message="กรุณายืนยันการออกจากหน้านี้"
+        icon={
+          <img className="confirm__icon--fill" src="/assets/info.svg" alt="" />
+        }
+        onClose={() => setConfirmBackOpen(false)}
+        onConfirm={() => {
+          setConfirmBackOpen(false);
+          onBack();
+        }}
+      />
     </>
   );
 }

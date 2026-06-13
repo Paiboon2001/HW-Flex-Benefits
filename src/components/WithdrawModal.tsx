@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Button from "./Button";
+import { formatMoneyInput } from "./CreateBenefitModal";
 import "./WithdrawModal.css";
 
 interface WithdrawModalProps {
@@ -9,6 +10,8 @@ interface WithdrawModalProps {
   total: number;
   /** Amount already disbursed via submitted requests. */
   disbursed?: number;
+  /** Pre-fill the field when editing an existing withdrawal (0 = blank). */
+  initialAmount?: number;
   image?: string | null;
   onClose: () => void;
   onConfirm: (amount: number) => void;
@@ -30,6 +33,7 @@ export default function WithdrawModal({
   name,
   total,
   disbursed = 0,
+  initialAmount = 0,
   image,
   onClose,
   onConfirm,
@@ -37,11 +41,17 @@ export default function WithdrawModal({
 }: WithdrawModalProps) {
   const [amount, setAmount] = useState("");
 
+  // Pre-fill (or clear) the field whenever the popup opens — when editing an
+  // existing withdrawal, show the amount already entered so it can be edited.
   useEffect(() => {
-    if (!open) {
-      setAmount("");
-      return;
-    }
+    setAmount(
+      open && initialAmount > 0 ? formatMoneyInput(String(initialAmount)) : ""
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
@@ -62,8 +72,7 @@ export default function WithdrawModal({
   const isValid = value > 0 && !exceedsTotal;
 
   const handleAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const digits = e.target.value.replace(/\D/g, "");
-    setAmount(digits ? Number(digits).toLocaleString("en-US") : "");
+    setAmount(formatMoneyInput(e.target.value));
   };
 
   return (
@@ -83,16 +92,14 @@ export default function WithdrawModal({
             <svg
               width="20"
               height="20"
-              viewBox="0 0 24 24"
+              viewBox="0 0 20 20"
               fill="none"
               stroke="currentColor"
-              strokeWidth="1.7"
+              strokeWidth="1.67"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <path d="M21 11V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h6" />
-              <path d="M3 10h18" />
-              <path d="M16 19.5 19.5 16a1.4 1.4 0 0 1 2 2L18 21.5l-2.5.5.5-2.5Z" />
+              <path d="M1.66699 8.33268H18.3337V6.83268C18.3337 5.89926 18.3337 5.43255 18.152 5.07603C17.9922 4.76243 17.7372 4.50746 17.4236 4.34767C17.0671 4.16602 16.6004 4.16602 15.667 4.16602H4.33366C3.40024 4.16602 2.93353 4.16602 2.57701 4.34767C2.2634 4.50746 2.00844 4.76243 1.84865 5.07603C1.66699 5.43255 1.66699 5.89926 1.66699 6.83268V13.166C1.66699 14.0994 1.66699 14.5661 1.84865 14.9227C2.00844 15.2363 2.2634 15.4912 2.57701 15.651C2.93353 15.8327 3.40024 15.8327 4.33366 15.8327H9.16699M12.0837 17.4993L13.7711 17.1619C13.9183 17.1324 13.9918 17.1177 14.0604 17.0908C14.1213 17.0669 14.1792 17.0359 14.2329 16.9985C14.2933 16.9564 14.3463 16.9033 14.4525 16.7972L17.917 13.3327C18.3772 12.8724 18.3772 12.1263 17.917 11.666C17.4568 11.2058 16.7106 11.2058 16.2503 11.666L12.7858 15.1306C12.6797 15.2367 12.6266 15.2897 12.5845 15.3502C12.5471 15.4038 12.5161 15.4617 12.4922 15.5226C12.4653 15.5912 12.4506 15.6647 12.4212 15.8119L12.0837 17.4993Z" />
             </svg>
             แก้ไข Benefit
           </Button>
@@ -105,7 +112,7 @@ export default function WithdrawModal({
           <div className="withdraw__detail">
             <p className="withdraw__name">{name}</p>
             <div className="withdraw__budget">
-              <span className="withdraw__budget-value">{fmt(total)}</span>
+              <span className="withdraw__budget-value">{fmt(available)}</span>
               <span className="withdraw__budget-unit">THB</span>
             </div>
           </div>
@@ -122,7 +129,7 @@ export default function WithdrawModal({
                 id="wm-amount"
                 className="tf__input"
                 type="text"
-                inputMode="numeric"
+                inputMode="decimal"
                 autoComplete="off"
                 placeholder=" "
                 value={amount}

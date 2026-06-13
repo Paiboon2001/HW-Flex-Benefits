@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
 import "./ConfirmModal.css";
 
 interface ConfirmModalProps {
@@ -7,6 +7,10 @@ interface ConfirmModalProps {
   message?: string;
   confirmLabel?: string;
   cancelLabel?: string;
+  /** Custom icon; defaults to the green check (Figma 228:433). */
+  icon?: ReactNode;
+  /** Render the confirm button in the destructive red style. */
+  confirmDanger?: boolean;
   onClose: () => void;
   onConfirm: () => void;
 }
@@ -20,6 +24,8 @@ export default function ConfirmModal({
   message = "กรุณายืนยันการส่งคำขอเบิกงบประมาณ",
   confirmLabel = "ยืนยัน",
   cancelLabel = "ยกเลิก",
+  icon,
+  confirmDanger = false,
   onClose,
   onConfirm,
 }: ConfirmModalProps) {
@@ -48,7 +54,9 @@ export default function ConfirmModal({
       >
         <div className="confirm__body">
           <div className="confirm__icon">
-            <img src="/assets/check.svg" alt="" />
+            {icon ?? (
+              <img className="confirm__icon--fill" src="/assets/check.svg" alt="" />
+            )}
           </div>
           <div className="confirm__text">
             <p className="confirm__title">{title}</p>
@@ -65,7 +73,9 @@ export default function ConfirmModal({
           </button>
           <button
             type="button"
-            className="modal-btn modal-btn--primary"
+            className={`modal-btn ${
+              confirmDanger ? "modal-btn--danger" : "modal-btn--primary"
+            }`}
             onClick={onConfirm}
           >
             {confirmLabel}

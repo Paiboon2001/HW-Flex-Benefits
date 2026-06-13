@@ -36,7 +36,12 @@ export default function FlexBenefits() {
   const [toastOpen, setToastOpen] = useState(false);
   const [withdrawId, setWithdrawId] = useState<string | null>(null);
   const [editId, setEditId] = useState<string | null>(null);
+  // Whether the edit modal was opened from the withdraw popup (→ return to it
+  // on close/save) or from the card's options menu (→ just close).
+  const [editFromWithdraw, setEditFromWithdraw] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
+  const [summaryIds, setSummaryIds] = useState<string[]>([]);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState(
     "คุณได้ทำการสร้างกระเป๋า Benefit สำเร็จแล้ว"
@@ -68,6 +73,11 @@ export default function FlexBenefits() {
   const selected = benefits.filter((b) => (b.used ?? 0) > 0);
   const selectedTotal = selected.reduce((sum, b) => sum + (b.used ?? 0), 0);
 
+  // Rows shown on the summary are frozen when it opens, so editing an amount
+  // down to 0 keeps the row (with the submit button disabled) instead of
+  // dropping it out of the list.
+  const summaryBenefits = benefits.filter((b) => summaryIds.includes(b.id));
+
   // Click a card: if it already has a pending withdrawal → unselect (clear it);
   // otherwise open its withdraw popup.
   const handleCardClick = (b: Benefit) => {
@@ -82,8 +92,7 @@ export default function FlexBenefits() {
 
   const handleSave = (data: NewBenefit) => {
     if (editId) {
-      // Edit: update the existing benefit, keep its withdrawal/checked state,
-      // then return to its withdraw popup.
+      // Edit: update the existing benefit, keep its withdrawal/checked state.
       setBenefits((prev) =>
         prev.map((b) =>
           b.id === editId
@@ -91,8 +100,10 @@ export default function FlexBenefits() {
             : b
         )
       );
-      setWithdrawId(editId);
+      // Return to the withdraw popup only if the edit came from there.
+      if (editFromWithdraw) setWithdrawId(editId);
       setEditId(null);
+      setEditFromWithdraw(false);
     } else {
       setBenefits((prev) => [
         ...prev,
@@ -125,12 +136,20 @@ export default function FlexBenefits() {
 
   const closeBenefitModal = () => {
     if (editId) {
-      // Editing came from the withdraw popup → go back to it.
-      setWithdrawId(editId);
+      // Return to the withdraw popup only if the edit came from there.
+      if (editFromWithdraw) setWithdrawId(editId);
       setEditId(null);
+      setEditFromWithdraw(false);
     } else {
       setCreateOpen(false);
     }
+  };
+
+  const handleDeleteBenefit = (id: string) => {
+    setBenefits((prev) => prev.filter((b) => b.id !== id));
+    setSummaryIds((prev) => prev.filter((sid) => sid !== id));
+    if (withdrawId === id) setWithdrawId(null);
+    if (editId === id) setEditId(null);
   };
 
   return (
@@ -143,10 +162,20 @@ export default function FlexBenefits() {
         <main className="flex-benefits__main">
           {showSummary ? (
             <SummaryPage
-              benefits={selected}
+              benefits={summaryBenefits}
               remaining={remaining}
               onBack={() => setShowSummary(false)}
               onSubmit={() => setConfirmOpen(true)}
+              onAmountChange={(id, amount) =>
+                setBenefits((prev) =>
+                  prev.map((b) => (b.id === id ? { ...b, used: amount } : b))
+                )
+              }
+              onError={(message) => {
+                setToastVariant("error");
+                setToastMsg(message);
+                setToastOpen(true);
+              }}
             />
           ) : (
           <>
@@ -252,6 +281,12 @@ export default function FlexBenefits() {
                     image={b.image}
                     active={withdrawId === b.id}
                     onClick={() => handleCardClick(b)}
+                    onEditWithdraw={() => setWithdrawId(b.id)}
+                    onEditBenefit={() => {
+                      setEditFromWithdraw(false);
+                      setEditId(b.id);
+                    }}
+                    onDelete={() => setDeleteId(b.id)}
                   />
                 ))}
               </div>
@@ -262,7 +297,10 @@ export default function FlexBenefits() {
             <SummaryBar
               count={selected.length}
               total={selectedTotal}
-              onSubmit={() => setShowSummary(true)}
+              onSubmit={() => {
+                setSummaryIds(selected.map((b) => b.id));
+                setShowSummary(true);
+              }}
             />
           )}
           </>
@@ -295,6 +333,7 @@ export default function FlexBenefits() {
         name={withdrawBenefit?.name ?? ""}
         total={withdrawBenefit?.total ?? 0}
         disbursed={withdrawBenefit?.disbursed ?? 0}
+        initialAmount={withdrawBenefit?.used ?? 0}
         image={withdrawBenefit?.image}
         onClose={() => setWithdrawId(null)}
         onEdit={() => {
@@ -310,7 +349,8 @@ export default function FlexBenefits() {
             setToastOpen(true);
             return;
           }
-          // Go edit this benefit (pre-filled), can save back.
+          // Go edit this benefit (pre-filled), can save back to the popup.
+          setEditFromWithdraw(true);
           setEditId(withdrawId);
           setWithdrawId(null);
         }}
@@ -328,6 +368,22 @@ export default function FlexBenefits() {
         open={confirmOpen}
         onClose={() => setConfirmOpen(false)}
         onConfirm={handleSubmitRequest}
+      />
+
+      <ConfirmModal
+        open={deleteId != null}
+        title="คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้"
+        message="หากลบข้อมูลนี้ จะถูกลบออกอย่างถาวร"
+        confirmLabel="ลบ"
+        confirmDanger
+        icon={
+          <img className="confirm__icon--fill" src="/assets/delete.svg" alt="" />
+        }
+        onClose={() => setDeleteId(null)}
+        onConfirm={() => {
+          if (deleteId) handleDeleteBenefit(deleteId);
+          setDeleteId(null);
+        }}
       />
 
       <Toast

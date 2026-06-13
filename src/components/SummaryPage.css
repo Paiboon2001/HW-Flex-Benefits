@@ -124,7 +124,7 @@
 .summary-row__thumb {
   flex-shrink: 0;
   width: 80px;
-  height: 67px;
+  aspect-ratio: 4 / 3;
   border-radius: 16px;
   overflow: hidden;
   background: var(--bg-secondary);
@@ -160,6 +160,7 @@
 }
 
 .summary-row__used {
+  font-size: 14px;
   font-weight: 500;
   color: var(--text-secondary);
 }
@@ -172,32 +173,64 @@
   color: var(--text-gray-icon);
 }
 
+/* Matches the shared .tf text field (Figma 228:2887) */
 .summary-row__badge {
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
   height: 40px;
-  padding: 8px;
+  padding: 0 16px;
   border: 1px solid var(--border-default);
   border-radius: 8px;
+  background: var(--bg-primary);
   font-size: 16px;
   font-weight: 700;
+  cursor: text;
+  transition: border-color 0.15s ease;
+}
+
+.summary-row__badge:focus-within {
+  border-color: var(--text-secondary);
+}
+
+/* Amount over the card's remaining budget — matches .tf--error */
+.summary-row__badge--error,
+.summary-row__badge--error:focus-within {
+  border-color: #ef4444;
+}
+
+.summary-row__badge--error .summary-row__baht,
+.summary-row__badge--error .summary-row__input {
+  color: #ef4444;
 }
 
 .summary-row__baht {
   color: var(--text-gray-02);
 }
 
-.summary-row__amount {
+.summary-row__input {
+  /* Auto-size to the typed value (modern browsers); the `size` attribute is
+     the fallback width everywhere else. */
+  width: auto;
+  field-sizing: content;
+  min-width: 1ch;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
   color: var(--text-secondary);
+  text-align: right;
+  outline: none;
 }
 
 /* Totals */
 .summary-card__totals {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   padding: 24px 0;
 }
 
@@ -341,8 +374,14 @@
   transition: background-color 0.15s ease;
 }
 
-.summary-card__submit:hover {
+.summary-card__submit:hover:not(:disabled) {
   background: #2150a5;
+}
+
+.summary-card__submit:disabled {
+  background: var(--border-default);
+  color: var(--text-gray-02);
+  cursor: not-allowed;
 }
 
 @media (max-width: 600px) {
@@ -363,5 +402,9 @@
 
   .summary__body {
     padding: 16px;
+  }
+
+  .summary-card {
+    padding: 0 16px;
   }
 }
