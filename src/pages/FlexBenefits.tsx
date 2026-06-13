@@ -9,6 +9,9 @@ import CreateBenefitModal, {
 } from "../components/CreateBenefitModal";
 import BenefitItemCard, { type Benefit } from "../components/BenefitItemCard";
 import WithdrawModal from "../components/WithdrawModal";
+import SummaryBar from "../components/SummaryBar";
+import SummaryPage from "../components/SummaryPage";
+import ConfirmModal from "../components/ConfirmModal";
 import Toast from "../components/Toast";
 import "./FlexBenefits.css";
 
@@ -33,6 +36,11 @@ export default function FlexBenefits() {
   const [toastOpen, setToastOpen] = useState(false);
   const [withdrawId, setWithdrawId] = useState<string | null>(null);
   const [editId, setEditId] = useState<string | null>(null);
+  const [showSummary, setShowSummary] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [toastMsg, setToastMsg] = useState(
+    "คุณได้ทำการสร้างกระเป๋า Benefit สำเร็จแล้ว"
+  );
   const idRef = useRef(0);
 
   const withdrawBenefit = benefits.find((b) => b.id === withdrawId);
@@ -46,6 +54,10 @@ export default function FlexBenefits() {
   const spent = benefits.reduce((sum, b) => sum + (b.used ?? 0), 0);
   const remaining = INITIAL_BUDGET - allocated;
   const [usedWhole, usedDecimal] = fmtMoney(spent).split(".") as [string, string];
+
+  // Selected (checked) benefits → bottom summary bar.
+  const selected = benefits.filter((b) => b.checked);
+  const selectedTotal = selected.reduce((sum, b) => sum + (b.used ?? 0), 0);
 
   const handleSave = (data: NewBenefit) => {
     if (editId) {
@@ -65,9 +77,17 @@ export default function FlexBenefits() {
         ...prev,
         { id: `b${(idRef.current += 1)}`, used: 0, ...data },
       ]);
+      setToastMsg("คุณได้ทำการสร้างกระเป๋า Benefit สำเร็จแล้ว");
       setToastOpen(true);
       setCreateOpen(false);
     }
+  };
+
+  const handleSubmitRequest = () => {
+    setConfirmOpen(false);
+    setShowSummary(false);
+    setToastMsg("ส่งคำขอเบิกงบ Benefit สำเร็จแล้ว");
+    setToastOpen(true);
   };
 
   const closeBenefitModal = () => {
@@ -88,6 +108,15 @@ export default function FlexBenefits() {
         <Sidebar open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
         <main className="flex-benefits__main">
+          {showSummary ? (
+            <SummaryPage
+              benefits={selected}
+              remaining={remaining}
+              onBack={() => setShowSummary(false)}
+              onSubmit={() => setConfirmOpen(true)}
+            />
+          ) : (
+          <>
           <header className="flex-benefits__head">
             <h1 className="flex-benefits__title">Flex Benefits</h1>
             <div className="flex-benefits__hint">
@@ -195,6 +224,16 @@ export default function FlexBenefits() {
               </div>
             )}
           </div>
+
+          {selected.length > 0 && (
+            <SummaryBar
+              count={selected.length}
+              total={selectedTotal}
+              onSubmit={() => setShowSummary(true)}
+            />
+          )}
+          </>
+          )}
         </main>
       </div>
 
@@ -237,9 +276,15 @@ export default function FlexBenefits() {
         }}
       />
 
+      <ConfirmModal
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={handleSubmitRequest}
+      />
+
       <Toast
         open={toastOpen}
-        message="คุณได้ทำการสร้างกระเป๋า Benefit สำเร็จแล้ว"
+        message={toastMsg}
         onClose={() => setToastOpen(false)}
       />
     </div>

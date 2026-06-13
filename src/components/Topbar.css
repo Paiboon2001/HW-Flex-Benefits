@@ -3,6 +3,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  flex-shrink: 0;
   padding: 8px 32px;
   background: var(--bg-primary);
   border-bottom: 1px solid var(--border-default);

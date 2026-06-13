@@ -1,7 +1,11 @@
 .flex-benefits {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  /* Fixed viewport height so the topbar + sidebar stay put and only the
+     main content scrolls */
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
   background: var(--bg-secondary);
 }
 
@@ -16,6 +20,7 @@
   flex-direction: column;
   flex: 1 0 0;
   min-width: 0;
+  min-height: 0;
 }
 
 /* ---- Page header ("Flex Benefits" + hint) ---- */
@@ -105,6 +110,8 @@
 /* ---- Scrollable content ---- */
 .flex-benefits__content {
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   padding: 24px;

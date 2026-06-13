@@ -1,0 +1,366 @@
+/* ---- Header bar ---- */
+.summary__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 32px;
+  background: var(--bg-primary);
+  border-bottom: 1px solid #e9eaf5;
+}
+
+.summary__head-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.summary__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.summary__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.summary__breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-gray-icon);
+  flex-shrink: 0;
+}
+
+.summary__crumb {
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--text-gray-icon);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.summary__crumb--active {
+  color: var(--text-primary);
+  cursor: default;
+}
+
+/* ---- Body + card ---- */
+.summary__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 550px;
+  padding: 0 24px;
+  background: var(--bg-primary);
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(98, 102, 125, 0.08);
+}
+
+.summary-card__content {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-card__group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 0;
+}
+
+.summary-card__group--solid {
+  border-bottom: 1px solid var(--border-default);
+}
+
+.summary-card__group--dashed {
+  gap: 0;
+  padding: 0;
+  border-bottom: 1px dashed var(--border-default);
+}
+
+/* Requested benefit rows */
+.summary-card__benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.summary-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.summary-row__thumb {
+  flex-shrink: 0;
+  width: 80px;
+  height: 67px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--bg-secondary);
+}
+
+.summary-row__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.summary-row__detail {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summary-row__name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.summary-row__budget {
+  margin: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  font-size: 12px;
+}
+
+.summary-row__used {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.summary-row__sep {
+  color: #262b3e;
+}
+
+.summary-row__total {
+  color: var(--text-gray-icon);
+}
+
+.summary-row__badge {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 40px;
+  padding: 8px;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.summary-row__baht {
+  color: var(--text-gray-02);
+}
+
+.summary-row__amount {
+  color: var(--text-secondary);
+}
+
+/* Totals */
+.summary-card__totals {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 0;
+}
+
+.summary-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.summary-line--indent {
+  padding-left: 12px;
+}
+
+.summary-line__label {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.summary-line__text {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.summary-line__value {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.summary-line__count {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.summary-line__num {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.summary-line--head .summary-line__num {
+  font-size: 18px;
+}
+
+.summary-line__num--minus {
+  color: #ff464b;
+}
+
+.summary-line__num--plus {
+  color: var(--text-primary);
+}
+
+.summary-line__unit {
+  font-size: 14px;
+  color: var(--text-gray-icon);
+}
+
+.summary-line__date {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+/* Payout channel */
+.summary-card__manage {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.summary-card__bank {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.summary-card__bank img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.summary-line__account {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+/* Info note */
+.summary-card__note {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  font-size: 12px;
+  line-height: 1.63;
+  color: var(--text-gray-icon);
+}
+
+.summary-card__note svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--text-gray-icon);
+}
+
+/* Footer */
+.summary-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 0;
+  border-top: 1px solid #e9e9e9;
+}
+
+.summary-card__submit {
+  width: 200px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background: var(--brand-primary);
+  color: var(--text-white);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.summary-card__submit:hover {
+  background: #2150a5;
+}
+
+@media (max-width: 600px) {
+  .summary__head {
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    padding: 16px;
+  }
+
+  .summary__title {
+    font-size: 18px;
+    white-space: normal;
+  }
+
+  .summary__breadcrumb {
+    display: none;
+  }
+
+  .summary__body {
+    padding: 16px;
+  }
+}
