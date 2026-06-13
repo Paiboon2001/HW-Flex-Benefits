@@ -41,6 +41,9 @@ export default function FlexBenefits() {
   const [toastMsg, setToastMsg] = useState(
     "คุณได้ทำการสร้างกระเป๋า Benefit สำเร็จแล้ว"
   );
+  const [toastVariant, setToastVariant] = useState<"success" | "error">(
+    "success"
+  );
   // Banner figures change ONLY when a request is submitted from the summary —
   // creating/withdrawing/editing benefits never touches them.
   const [bankUsed, setBankUsed] = useState(0);
@@ -95,6 +98,7 @@ export default function FlexBenefits() {
         ...prev,
         { id: `b${(idRef.current += 1)}`, used: 0, ...data },
       ]);
+      setToastVariant("success");
       setToastMsg("คุณได้ทำการสร้างกระเป๋า Benefit สำเร็จแล้ว");
       setToastOpen(true);
       setCreateOpen(false);
@@ -114,6 +118,7 @@ export default function FlexBenefits() {
     );
     setConfirmOpen(false);
     setShowSummary(false);
+    setToastVariant("success");
     setToastMsg("ส่งคำขอเบิกงบ Benefit สำเร็จแล้ว");
     setToastOpen(true);
   };
@@ -289,9 +294,22 @@ export default function FlexBenefits() {
         open={withdrawBenefit != null}
         name={withdrawBenefit?.name ?? ""}
         total={withdrawBenefit?.total ?? 0}
+        disbursed={withdrawBenefit?.disbursed ?? 0}
         image={withdrawBenefit?.image}
         onClose={() => setWithdrawId(null)}
         onEdit={() => {
+          // A fully-disbursed benefit can't be edited.
+          if (
+            withdrawBenefit &&
+            (withdrawBenefit.disbursed ?? 0) >= withdrawBenefit.total
+          ) {
+            setToastVariant("error");
+            setToastMsg(
+              "ไม่สามารถแก้ไขข้อมูลได้ เนื่องจากเบิกเงินเต็มจำนวนแล้ว"
+            );
+            setToastOpen(true);
+            return;
+          }
           // Go edit this benefit (pre-filled), can save back.
           setEditId(withdrawId);
           setWithdrawId(null);
@@ -315,6 +333,7 @@ export default function FlexBenefits() {
       <Toast
         open={toastOpen}
         message={toastMsg}
+        variant={toastVariant}
         onClose={() => setToastOpen(false)}
       />
     </div>

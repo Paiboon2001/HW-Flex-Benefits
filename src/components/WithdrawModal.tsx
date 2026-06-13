@@ -7,6 +7,8 @@ interface WithdrawModalProps {
   name: string;
   /** The benefit's allocated budget. */
   total: number;
+  /** Amount already disbursed via submitted requests. */
+  disbursed?: number;
   image?: string | null;
   onClose: () => void;
   onConfirm: (amount: number) => void;
@@ -27,6 +29,7 @@ export default function WithdrawModal({
   open,
   name,
   total,
+  disbursed = 0,
   image,
   onClose,
   onConfirm,
@@ -52,8 +55,10 @@ export default function WithdrawModal({
 
   if (!open) return null;
 
+  // Remaining budget on the card = allocated − already disbursed.
+  const available = Math.max(0, total - disbursed);
   const value = parseFloat(amount.replace(/,/g, "")) || 0;
-  const exceedsTotal = value > total;
+  const exceedsTotal = value > available;
   const isValid = value > 0 && !exceedsTotal;
 
   const handleAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,6 +123,7 @@ export default function WithdrawModal({
                 className="tf__input"
                 type="text"
                 inputMode="numeric"
+                autoComplete="off"
                 placeholder=" "
                 value={amount}
                 onChange={handleAmount}
@@ -130,7 +136,7 @@ export default function WithdrawModal({
             {exceedsTotal && (
               <p className="tf__error" role="alert">
                 ไม่สามารถใส่จำนวนเงินที่มากกว่า{" "}
-                {total.toLocaleString("en-US")} บาทได้
+                {available.toLocaleString("en-US")} บาทได้
               </p>
             )}
           </div>

@@ -97,6 +97,14 @@ export default function CreateBenefitModal({
   const exceedsMax = total > maxAmount;
   const isValid =
     name.trim() !== "" && total > 0 && !exceedsMax && preview !== null;
+  // When editing, only enable "บันทึก" if something actually changed
+  // (name, budget, or image differs from the original).
+  const isDirty =
+    !isEdit ||
+    name.trim() !== (initial?.name ?? "") ||
+    total !== (initial?.total ?? 0) ||
+    preview !== (initial?.image ?? null);
+  const canSave = isValid && isDirty;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -239,6 +247,7 @@ export default function CreateBenefitModal({
               id="cbm-name"
               className="tf__input"
               type="text"
+              autoComplete="off"
               placeholder=" "
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -258,6 +267,7 @@ export default function CreateBenefitModal({
                 className="tf__input"
                 type="text"
                 inputMode="numeric"
+                autoComplete="off"
                 placeholder=" "
                 value={amount}
                 onChange={handleAmountChange}
@@ -288,7 +298,7 @@ export default function CreateBenefitModal({
             type="button"
             className="modal-btn modal-btn--primary"
             onClick={handleSave}
-            disabled={!isValid}
+            disabled={!canSave}
           >
             บันทึก
           </button>

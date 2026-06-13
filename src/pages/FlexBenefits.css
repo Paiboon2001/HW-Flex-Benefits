@@ -155,10 +155,24 @@
 
 /* Grid of created benefit cards */
 .flex-benefits__grid {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
+  display: grid;
+  /* Desktop (normal width): 2 cards per row */
+  grid-template-columns: repeat(2, 1fr);
+  align-items: start;
   gap: 24px;
+}
+
+/* Let the grid control card width (override the flex sizing) */
+.flex-benefits__grid .bcard {
+  min-width: 0;
+  max-width: none;
+}
+
+/* Wide desktop: 3 cards per row */
+@media (min-width: 1800px) {
+  .flex-benefits__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 /* ---- Tablet / mobile ---- */
@@ -167,6 +181,11 @@
     flex-wrap: wrap;
     gap: 8px 16px;
     padding: 16px 20px;
+  }
+
+  /* Tablet & mobile: 1 card per row */
+  .flex-benefits__grid {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -10,9 +10,16 @@
   width: min(555px, calc(100vw - 32px));
   padding: 16px;
   border-radius: 8px;
-  background: #ccfae1;
   box-shadow: 0 4px 20px rgba(98, 102, 125, 0.16);
   animation: toast-in 0.2s ease;
+}
+
+.toast--success {
+  background: #ccfae1;
+}
+
+.toast--error {
+  background: #facccc;
 }
 
 .toast__icon {
@@ -28,7 +35,14 @@
   font-size: 14px;
   font-weight: 500;
   line-height: 1.4;
+}
+
+.toast--success .toast__text {
   color: #00643f;
+}
+
+.toast--error .toast__text {
+  color: #620202;
 }
 
 .toast__close {
@@ -41,8 +55,15 @@
   padding: 0;
   border: none;
   background: transparent;
-  color: #00643f;
   cursor: pointer;
+}
+
+.toast--success .toast__close {
+  color: #00643f;
+}
+
+.toast--error .toast__close {
+  color: #620202;
 }
 
 @keyframes toast-in {

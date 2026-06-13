@@ -5,17 +5,20 @@ interface ToastProps {
   open: boolean;
   message: string;
   onClose: () => void;
+  /** Visual style — green success (default) or red error (Figma 228:2799). */
+  variant?: "success" | "error";
   /** Auto-dismiss delay in ms. */
   duration?: number;
 }
 
 /**
- * Success toast — implemented from Figma "Toast" (228:2793).
+ * Toast — implemented from Figma "Toast" (success 228:2793, error 228:2799).
  */
 export default function Toast({
   open,
   message,
   onClose,
+  variant = "success",
   duration = 4000,
 }: ToastProps) {
   useEffect(() => {
@@ -27,18 +30,31 @@ export default function Toast({
   if (!open) return null;
 
   return (
-    <div className="toast" role="status">
+    <div className={`toast toast--${variant}`} role="status">
       <span className="toast__icon" aria-hidden="true">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" fill="#04cd83" />
-          <path
-            d="m8 12.2 2.6 2.6L16 9.4"
-            stroke="#ffffff"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        {variant === "error" ? (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" fill="#e02020" />
+            <path
+              d="M9 9l6 6M15 9l-6 6"
+              stroke="#ffffff"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        ) : (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" fill="#04cd83" />
+            <path
+              d="m8 12.2 2.6 2.6L16 9.4"
+              stroke="#ffffff"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
       </span>
       <p className="toast__text">{message}</p>
       <button
