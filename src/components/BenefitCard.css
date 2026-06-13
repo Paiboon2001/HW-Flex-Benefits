@@ -243,9 +243,9 @@
 }
 
 @media (max-width: 480px) {
-  /* Card hugs its content (no fixed height) */
+  /* Fixed height */
   .benefit-card {
-    min-height: auto;
+    min-height: 172px;
     padding: 16px;
   }
 
@@ -257,6 +257,12 @@
 
   .benefit-card__label {
     font-size: 14px;
+  }
+
+  .benefit-card__cycle {
+    font-size: 12px;
+    padding: 4px;
+    border-radius: 4px;
   }
 
   .benefit-card__emojis {

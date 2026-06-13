@@ -3,20 +3,21 @@ import "./BenefitItemCard.css";
 export interface Benefit {
   id: string;
   name: string;
+  /** (5) Pocket budget, set when the card is created. */
   total: number;
+  /** (4) Amount disbursed via submitted requests — drives the progress bar. */
+  disbursed?: number;
+  /** (6) Pending withdrawal entered in the popup; > 0 means the card is selected. */
   used?: number;
   image?: string | null;
-  /** True once a withdrawal has been confirmed for this benefit. */
-  checked?: boolean;
 }
 
 interface BenefitItemCardProps {
   name: string;
   total: number;
+  disbursed?: number;
   used?: number;
   image?: string | null;
-  /** Confirmed — shows the checkmark. */
-  checked?: boolean;
   /** Its withdraw popup is currently open — blue border without checkmark. */
   active?: boolean;
   onClick?: () => void;
@@ -36,21 +37,23 @@ const fmt = (n: number) =>
 export default function BenefitItemCard({
   name,
   total,
+  disbursed = 0,
   used = 0,
   image,
-  checked = false,
   active = false,
   onClick,
 }: BenefitItemCardProps) {
-  const pct = total > 0 ? Math.min(100, (used / total) * 100) : 0;
-  const highlighted = active || checked;
+  // (6) entered → selected. Progress (4) tracks disbursed only.
+  const selected = used > 0;
+  const pct = total > 0 ? Math.min(100, (disbursed / total) * 100) : 0;
+  const highlighted = active || selected;
 
   return (
     <div
       className={`bcard${highlighted ? " bcard--selected" : ""}`}
       role="button"
       tabIndex={0}
-      aria-pressed={checked}
+      aria-pressed={selected}
       onClick={onClick}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -68,11 +71,11 @@ export default function BenefitItemCard({
             <h3 className="bcard__title">{name}</h3>
             <span
               className={`bcard__checkbox${
-                checked ? " bcard__checkbox--checked" : ""
+                selected ? " bcard__checkbox--checked" : ""
               }`}
               aria-hidden="true"
             >
-              {checked && (
+              {selected && (
                 <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                   <path
                     d="M1 4.2 3.6 6.8 9 1.2"
@@ -87,7 +90,7 @@ export default function BenefitItemCard({
           </div>
           <div className="bcard__progress">
             <div className="bcard__amount">
-              <span className="bcard__used">{fmt(used)}</span>
+              <span className="bcard__used">{fmt(disbursed)}</span>
               <span className="bcard__sep">/</span>
               <span className="bcard__total">{fmt(total)} THB</span>
             </div>

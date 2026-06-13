@@ -109,7 +109,7 @@ export default function SummaryPage({
                       <p className="summary-row__name">{b.name}</p>
                       <p className="summary-row__budget">
                         <span className="summary-row__used">
-                          {fmt(b.used ?? 0)}
+                          {fmt(b.disbursed ?? 0)}
                         </span>
                         <span className="summary-row__sep">/</span>
                         <span className="summary-row__total">

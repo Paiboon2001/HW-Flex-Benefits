@@ -41,23 +41,41 @@ export default function FlexBenefits() {
   const [toastMsg, setToastMsg] = useState(
     "คุณได้ทำการสร้างกระเป๋า Benefit สำเร็จแล้ว"
   );
+  // Banner figures change ONLY when a request is submitted from the summary —
+  // creating/withdrawing/editing benefits never touches them.
+  const [bankUsed, setBankUsed] = useState(0);
   const idRef = useRef(0);
 
   const withdrawBenefit = benefits.find((b) => b.id === withdrawId);
   const editBenefit = benefits.find((b) => b.id === editId) ?? null;
 
-  // Banner figures. Creating a benefit divides money into a pocket (allocated)
-  // but isn't spent yet — so:
-  //   used (1)      = money actually withdrawn from pockets (benefit.used)
-  //   remaining (2) = initial (3) − money allocated to pockets (benefit.total)
-  const allocated = benefits.reduce((sum, b) => sum + b.total, 0);
-  const spent = benefits.reduce((sum, b) => sum + (b.used ?? 0), 0);
-  const remaining = INITIAL_BUDGET - allocated;
-  const [usedWhole, usedDecimal] = fmtMoney(spent).split(".") as [string, string];
+  // Banner: used (1) = total disbursed via submitted requests,
+  //         remaining (2) = initial (3) − used, total (3) = initial.
+  const remaining = INITIAL_BUDGET - bankUsed;
+  const [usedWhole, usedDecimal] = fmtMoney(bankUsed).split(".") as [
+    string,
+    string,
+  ];
 
-  // Selected (checked) benefits → bottom summary bar.
-  const selected = benefits.filter((b) => b.checked);
+  // Allocation limit (separate from the banner): total budget across all
+  // created cards (5) can't exceed the initial budget.
+  const allocated = benefits.reduce((sum, b) => sum + b.total, 0);
+
+  // A benefit is selected once a withdrawal (6) has been entered (used > 0).
+  const selected = benefits.filter((b) => (b.used ?? 0) > 0);
   const selectedTotal = selected.reduce((sum, b) => sum + (b.used ?? 0), 0);
+
+  // Click a card: if it already has a pending withdrawal → unselect (clear it);
+  // otherwise open its withdraw popup.
+  const handleCardClick = (b: Benefit) => {
+    if ((b.used ?? 0) > 0) {
+      setBenefits((prev) =>
+        prev.map((x) => (x.id === b.id ? { ...x, used: 0 } : x))
+      );
+    } else {
+      setWithdrawId(b.id);
+    }
+  };
 
   const handleSave = (data: NewBenefit) => {
     if (editId) {
@@ -84,6 +102,16 @@ export default function FlexBenefits() {
   };
 
   const handleSubmitRequest = () => {
+    // Only now does the banner change: add the requested withdrawals to the
+    // disbursed total, then clear the submitted (checked) benefits.
+    setBankUsed((prev) => prev + selectedTotal);
+    setBenefits((prev) =>
+      prev.map((b) =>
+        (b.used ?? 0) > 0
+          ? { ...b, disbursed: (b.disbursed ?? 0) + (b.used ?? 0), used: 0 }
+          : b
+      )
+    );
     setConfirmOpen(false);
     setShowSummary(false);
     setToastMsg("ส่งคำขอเบิกงบ Benefit สำเร็จแล้ว");
@@ -214,11 +242,11 @@ export default function FlexBenefits() {
                     key={b.id}
                     name={b.name}
                     total={b.total}
+                    disbursed={b.disbursed}
                     used={b.used}
                     image={b.image}
-                    checked={b.checked}
                     active={withdrawId === b.id}
-                    onClick={() => setWithdrawId(b.id)}
+                    onClick={() => handleCardClick(b)}
                   />
                 ))}
               </div>
@@ -242,7 +270,9 @@ export default function FlexBenefits() {
         onClose={closeBenefitModal}
         onSave={handleSave}
         maxAmount={
-          editBenefit ? remaining + editBenefit.total : remaining
+          editBenefit
+            ? INITIAL_BUDGET - allocated + editBenefit.total
+            : INITIAL_BUDGET - allocated
         }
         initial={
           editBenefit
@@ -269,7 +299,7 @@ export default function FlexBenefits() {
         onConfirm={(amount) => {
           setBenefits((prev) =>
             prev.map((b) =>
-              b.id === withdrawId ? { ...b, used: amount, checked: true } : b
+              b.id === withdrawId ? { ...b, used: amount } : b
             )
           );
           setWithdrawId(null);
