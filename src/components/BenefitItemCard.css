@@ -7,8 +7,23 @@
   max-width: 554px;
   padding: 24px;
   background: var(--bg-primary);
+  border: 1px solid transparent;
   border-radius: 16px;
   box-shadow: 0 4px 10px rgba(98, 102, 125, 0.1);
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+/* Hover — blue-tinted drop shadow (Figma DS_Hover-blue 228:1021) */
+.bcard:hover {
+  box-shadow: 0 4px 10px rgba(17, 141, 245, 0.15);
+}
+
+/* Selected (clicked) — blue border + blue shadow (Figma "Card Benefit-Done" 228:1471) */
+.bcard--selected,
+.bcard--selected:hover {
+  border-color: var(--brand-primary);
+  box-shadow: 0 4px 5px rgba(17, 141, 245, 0.15);
 }
 
 /* ---- Top: thumbnail + details ---- */
@@ -59,12 +74,21 @@
 }
 
 .bcard__checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
   width: 16px;
   height: 16px;
   border: 1px solid var(--text-gray-icon);
   border-radius: 4px;
   background: var(--brand-white);
+}
+
+/* Checked state */
+.bcard__checkbox--checked {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
 }
 
 .bcard__progress {
@@ -159,3 +183,4 @@
   color: var(--text-gray-icon);
   cursor: pointer;
 }
+

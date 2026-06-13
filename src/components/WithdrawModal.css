@@ -1,0 +1,103 @@
+/* Reuses .modal-overlay, .modal, .modal__foot, .modal-btn from CreateBenefitModal.css */
+
+/* ---- Header ---- */
+.withdraw__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0 16px;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.withdraw__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-secondary);
+}
+
+/* ---- Benefit info ---- */
+.withdraw__info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  width: 100%;
+}
+
+.withdraw__thumb {
+  width: 170px;
+  height: 120px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-secondary);
+  flex-shrink: 0;
+}
+
+.withdraw__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.withdraw__detail {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.withdraw__name {
+  margin: 0;
+  font-size: 16px;
+  color: var(--text-secondary);
+  letter-spacing: -0.176px;
+}
+
+.withdraw__budget {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.withdraw__budget-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.264px;
+}
+
+.withdraw__budget-unit {
+  font-size: 20px;
+  color: #6b81a0;
+  letter-spacing: -0.22px;
+}
+
+/* ---- Fields ---- */
+.withdraw__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  padding-bottom: 32px;
+}
+
+/* Info note */
+.withdraw__note {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  font-size: 12px;
+  line-height: 1.63;
+  color: var(--text-gray-icon);
+}
+
+.withdraw__note-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--text-gray-icon);
+}

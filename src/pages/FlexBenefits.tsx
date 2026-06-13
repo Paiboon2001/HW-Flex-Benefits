@@ -8,6 +8,7 @@ import CreateBenefitModal, {
   type NewBenefit,
 } from "../components/CreateBenefitModal";
 import BenefitItemCard, { type Benefit } from "../components/BenefitItemCard";
+import WithdrawModal from "../components/WithdrawModal";
 import Toast from "../components/Toast";
 import "./FlexBenefits.css";
 
@@ -16,20 +17,67 @@ import "./FlexBenefits.css";
  * (desktop 228:1744, tablet 228:1654, mobile 228:1565).
  * Single responsive page: sidebar collapses to a drawer below 1024px.
  */
+/** Total starting Flex Benefits budget (position 3 on the banner). */
+const INITIAL_BUDGET = 15000;
+
+const fmtMoney = (n: number) =>
+  n.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
 export default function FlexBenefits() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [benefits, setBenefits] = useState<Benefit[]>([]);
   const [toastOpen, setToastOpen] = useState(false);
+  const [withdrawId, setWithdrawId] = useState<string | null>(null);
+  const [editId, setEditId] = useState<string | null>(null);
   const idRef = useRef(0);
 
+  const withdrawBenefit = benefits.find((b) => b.id === withdrawId);
+  const editBenefit = benefits.find((b) => b.id === editId) ?? null;
+
+  // Banner figures. Creating a benefit divides money into a pocket (allocated)
+  // but isn't spent yet — so:
+  //   used (1)      = money actually withdrawn from pockets (benefit.used)
+  //   remaining (2) = initial (3) − money allocated to pockets (benefit.total)
+  const allocated = benefits.reduce((sum, b) => sum + b.total, 0);
+  const spent = benefits.reduce((sum, b) => sum + (b.used ?? 0), 0);
+  const remaining = INITIAL_BUDGET - allocated;
+  const [usedWhole, usedDecimal] = fmtMoney(spent).split(".") as [string, string];
+
   const handleSave = (data: NewBenefit) => {
-    setBenefits((prev) => [
-      ...prev,
-      { id: `b${(idRef.current += 1)}`, used: 0, ...data },
-    ]);
-    setCreateOpen(false);
-    setToastOpen(true);
+    if (editId) {
+      // Edit: update the existing benefit, keep its withdrawal/checked state,
+      // then return to its withdraw popup.
+      setBenefits((prev) =>
+        prev.map((b) =>
+          b.id === editId
+            ? { ...b, name: data.name, total: data.total, image: data.image }
+            : b
+        )
+      );
+      setWithdrawId(editId);
+      setEditId(null);
+    } else {
+      setBenefits((prev) => [
+        ...prev,
+        { id: `b${(idRef.current += 1)}`, used: 0, ...data },
+      ]);
+      setToastOpen(true);
+      setCreateOpen(false);
+    }
+  };
+
+  const closeBenefitModal = () => {
+    if (editId) {
+      // Editing came from the withdraw popup → go back to it.
+      setWithdrawId(editId);
+      setEditId(null);
+    } else {
+      setCreateOpen(false);
+    }
   };
 
   return (
@@ -76,7 +124,12 @@ export default function FlexBenefits() {
           </header>
 
           <div className="flex-benefits__content">
-            <BenefitCard />
+            <BenefitCard
+              usedWhole={usedWhole}
+              usedDecimal={`.${usedDecimal}`}
+              remaining={fmtMoney(remaining)}
+              total={fmtMoney(INITIAL_BUDGET)}
+            />
 
             <section className="flex-benefits__section-head">
               <h2 className="flex-benefits__section-title">Benefits ของฉัน</h2>
@@ -127,8 +180,17 @@ export default function FlexBenefits() {
               </div>
             ) : (
               <div className="flex-benefits__grid">
-                {benefits.map(({ id, ...rest }) => (
-                  <BenefitItemCard key={id} {...rest} />
+                {benefits.map((b) => (
+                  <BenefitItemCard
+                    key={b.id}
+                    name={b.name}
+                    total={b.total}
+                    used={b.used}
+                    image={b.image}
+                    checked={b.checked}
+                    active={withdrawId === b.id}
+                    onClick={() => setWithdrawId(b.id)}
+                  />
                 ))}
               </div>
             )}
@@ -137,9 +199,42 @@ export default function FlexBenefits() {
       </div>
 
       <CreateBenefitModal
-        open={createOpen}
-        onClose={() => setCreateOpen(false)}
+        open={createOpen || editId != null}
+        onClose={closeBenefitModal}
         onSave={handleSave}
+        maxAmount={
+          editBenefit ? remaining + editBenefit.total : remaining
+        }
+        initial={
+          editBenefit
+            ? {
+                name: editBenefit.name,
+                total: editBenefit.total,
+                image: editBenefit.image ?? null,
+              }
+            : null
+        }
+      />
+
+      <WithdrawModal
+        open={withdrawBenefit != null}
+        name={withdrawBenefit?.name ?? ""}
+        total={withdrawBenefit?.total ?? 0}
+        image={withdrawBenefit?.image}
+        onClose={() => setWithdrawId(null)}
+        onEdit={() => {
+          // Go edit this benefit (pre-filled), can save back.
+          setEditId(withdrawId);
+          setWithdrawId(null);
+        }}
+        onConfirm={(amount) => {
+          setBenefits((prev) =>
+            prev.map((b) =>
+              b.id === withdrawId ? { ...b, used: amount, checked: true } : b
+            )
+          );
+          setWithdrawId(null);
+        }}
       />
 
       <Toast

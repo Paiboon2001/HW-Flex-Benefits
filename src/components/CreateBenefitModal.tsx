@@ -13,18 +13,23 @@ interface CreateBenefitModalProps {
   onSave?: (data: NewBenefit) => void;
   /** Max budget that can be allocated (the remaining starting budget). */
   maxAmount?: number;
+  /** When provided, the modal edits an existing benefit (pre-filled). */
+  initial?: NewBenefit | null;
 }
 
 /**
- * "สร้าง Benefits ของคุณ" modal — implemented from Figma "Create Benefit" (228:298).
- * Opens from the "สร้าง Benefit" buttons.
+ * "สร้าง / แก้ไข Benefits ของคุณ" modal — implemented from Figma "Create Benefit"
+ * (228:298). Opens from the "สร้าง Benefit" buttons (create) or the withdraw
+ * popup's "แก้ไข Benefit" button (edit).
  */
 export default function CreateBenefitModal({
   open,
   onClose,
   onSave,
   maxAmount = 15000,
+  initial = null,
 }: CreateBenefitModalProps) {
+  const isEdit = initial != null;
   const fileRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -44,16 +49,22 @@ export default function CreateBenefitModal({
     };
   }, [open, onClose]);
 
-  // Reset the form whenever the modal closes.
+  // On open: pre-fill from `initial` (edit) or start blank (create).
+  // On close: clear the form.
   useEffect(() => {
-    if (!open) {
-      setPreview((prev) => {
-        if (prev) URL.revokeObjectURL(prev);
-        return null;
-      });
+    if (open) {
+      setName(initial?.name ?? "");
+      setAmount(
+        initial?.total ? Number(initial.total).toLocaleString("en-US") : ""
+      );
+      setPreview(initial?.image ?? null);
+    } else {
       setName("");
       setAmount("");
+      setPreview(null);
     }
+    // Only re-init when the open state flips.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   // Money input: keep digits only, add thousands separators (e.g. 1,000).
@@ -64,7 +75,6 @@ export default function CreateBenefitModal({
 
   const handleSave = () => {
     const total = parseFloat(amount.replace(/,/g, "")) || 0;
-    // Hand the image URL over to the saved benefit (don't revoke it on close).
     const image = preview;
     setPreview(null);
     onSave?.({ name: name.trim(), total, image });
@@ -77,10 +87,7 @@ export default function CreateBenefitModal({
       e.target.value = "";
       return; // only *.jpeg / *.jpg / *.png allowed
     }
-    setPreview((prev) => {
-      if (prev) URL.revokeObjectURL(prev);
-      return URL.createObjectURL(file);
-    });
+    setPreview(URL.createObjectURL(file));
   };
 
   if (!open) return null;
@@ -102,7 +109,7 @@ export default function CreateBenefitModal({
       >
         <header className="modal__head">
           <h2 className="modal__title" id="cbm-title">
-            สร้าง Benefits ของคุณ
+            {isEdit ? "แก้ไข Benefits ของคุณ" : "สร้าง Benefits ของคุณ"}
           </h2>
         </header>
 
@@ -227,7 +234,7 @@ export default function CreateBenefitModal({
         </div>
 
         <div className="modal__fields">
-          <div className="tf">
+          <div className={`tf${name ? " tf--filled" : ""}`}>
             <input
               id="cbm-name"
               className="tf__input"
@@ -241,7 +248,11 @@ export default function CreateBenefitModal({
             </label>
           </div>
           <div className="tf-field">
-            <div className={`tf tf--amount${exceedsMax ? " tf--error" : ""}`}>
+            <div
+              className={`tf tf--amount${amount ? " tf--filled" : ""}${
+                exceedsMax ? " tf--error" : ""
+              }`}
+            >
               <input
                 id="cbm-amount"
                 className="tf__input"

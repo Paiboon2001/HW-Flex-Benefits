@@ -205,7 +205,8 @@
 
 /* Float the label up onto the border when focused or filled */
 .tf__input:focus ~ .tf__label,
-.tf__input:not(:placeholder-shown) ~ .tf__label {
+.tf__input:not(:placeholder-shown) ~ .tf__label,
+.tf--filled .tf__label {
   top: 0;
   left: 12px;
   font-size: 12px;
